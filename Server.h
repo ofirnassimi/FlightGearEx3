@@ -21,6 +21,10 @@ struct  Server {
         this -> port = p;
     }
 
+    /**
+     * reads the buffer (a line with values we get from the simulator) and adds them to a map by their path and by their
+     * place in the buffer
+     */
     static void buffToMap(char buffer[]) {
         unordered_map<string, float> ret;
         vector<string> names = Singleton::instance()->buildArray();
@@ -82,9 +86,13 @@ struct  Server {
         thread_obj.detach();
     }
 
+    /**
+     * a function we send to the thread - reads from the simulator
+     * @param client_socket
+     */
     static void readFromClient(int client_socket) {
+        //while(!IsDone::instance()->getInstance()) {
         while(true) {
-        //while (!Singleton::instance()->getDone()) {
             char buffer[1024] = {0};
             int valread = read(client_socket, buffer, 1024);
             buffToMap(buffer);

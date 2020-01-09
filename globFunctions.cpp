@@ -5,6 +5,9 @@
 #include <sstream>
 #include "globFunctions.h"
 
+/**
+ * checks if the string is kind of variable and if it is, it returns what kind of variable
+ */
 string isVar(string var) {
     if (VarToSim::instance()->getInstance().find(var) != VarToSim::instance()->getInstance().end()) {
         return "VarToSim";
@@ -39,14 +42,17 @@ bool is_number( string myString ) {
 string removeSpaces(string str)
 {
     string ret = "";
-    for(int i = 0; i<str.length(); i++) {
-        if (str[i]!=' ') {
-            ret+=str[i];
+    for(int i = 0; i < str.length(); i++) {
+        if (str[i] != ' ') {
+            ret += str[i];
         }
     }
     return ret;
 }
 
+/**
+ * gets a string and returns the number of it after calculation
+ */
 float solveExpression(string expression) {
     expression = removeSpaces(expression);
     Interpreter *it = new Interpreter();
@@ -75,11 +81,11 @@ float solveExpression(string expression) {
                 } else {
                     std::ostringstream oss;
                     if (vType == "Vars") {
-                        oss <<command << "=" << Vars::instance()->getByName(command);
+                        oss << command << "=" << Vars::instance()->getByName(command);
                     } else if (vType == "VarToSim") {
-                        oss<< command << "=" << VarToSim::instance()->getInstance().at(command)->getValue();
+                        oss << command << "=" << VarToSim::instance()->getInstance().at(command)->getValue();
                     } else if (vType == "ConstVars") {
-                        oss<< command << "=" << ConstVars::instance()->getInstance().at(command);
+                        oss << command << "=" << ConstVars::instance()->getInstance().at(command);
                     }
                     string val = oss.str();
                     it->setVariables(val);
@@ -87,18 +93,10 @@ float solveExpression(string expression) {
             }
         }
     }
-    if ((is_number(expression))|| check) {
+    if ((is_number(expression)) || check) {
         expression += "+0";
     }
     // solve and return answer
     Expression *ans = it->interpret(expression);
     return ans->calculate();
-
-//    std::ostringstream oss;
-//    oss << "(" << expression << ")" << "+0";
-//    expression = oss.str();
-//    cout<<expression<<endl;
-//    Expression *ans = it->interpret(expression);
-//    cout << "end of solve" << endl;
-//    return ans->calculate();
 }

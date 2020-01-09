@@ -12,6 +12,9 @@
 
 using namespace std;
 
+/**
+ * This singleton map includes all of the values we get straight from the server (by buffer)
+ */
 class Singleton {
 
 private:
@@ -23,6 +26,9 @@ private:
 
 public:
 
+    /**
+     * creates a vector with all of the paths "addresses" from the simulator (from XML file)
+     */
     static vector<string> buildArray() {
         vector<string> strVec(36);
         strVec[0] = "/instrumentation/airspeed-indicator/indicated-speed-kt";
@@ -68,12 +74,16 @@ public:
     unordered_map<string, float> getInstance() {
         return myMap;
     }
+
+    /**
+     * changes the exsisting map with a new map
+     */
     void setInstance(unordered_map<string, float> newMap) {
         if (myMap.empty()) {
             myMap = newMap;
         }
         vector<string> arr = buildArray();
-        for(int i = 0; i<arr.size(); i++) {
+        for(int i = 0; i < arr.size(); i++) {
             myMap.at(arr[i]) = newMap.at(arr[i]);
         }
     }

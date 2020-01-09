@@ -8,6 +8,9 @@
 
 using namespace std;
 
+/**
+ * this map includes all of the variables that defined by "<-"
+ */
 class Vars {
  private:
   unordered_map<string, string> myMap;
@@ -35,8 +38,6 @@ class Vars {
       return ret;
   }
     float getByAddress(string address) {
-
-
         Singleton::mutex_lock.lock();
         float ret = Singleton::instance()->getInstance().at(address);
         Singleton::mutex_lock.unlock();

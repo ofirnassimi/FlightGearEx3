@@ -13,6 +13,7 @@
 #include <sstream>
 #include "toClient.h"
 #include "Singleton.h"
+#include <mutex>
 
 using namespace std;
 toClient *toClient::s;
@@ -40,13 +41,12 @@ struct Client {
         sockaddr_in address;
         address.sin_family = AF_INET;
 
-        //delete the " at the begining and the end of the IP string
+        //delete the " at the beginning and the end of the IP string
         string newIP = IP;
         newIP.erase(0,1);
         newIP.erase(newIP.size() - 1, 1);
 
-        address.sin_addr.s_addr = inet_addr(newIP.c_str()); //TODO: make sure we get the right IP("127.0.0.1")
-        //address.sin_addr.s_addr = inet_addr("127.0.0.1"); //TODO: fix IP
+        address.sin_addr.s_addr = inet_addr(newIP.c_str());
         address.sin_port = htons(this->port);
 
         //request a connection with the server
@@ -72,11 +72,11 @@ struct Client {
     static void clientThread(int client_socket) {
         int is_sent;
         vector<string> arr = Singleton::buildArray();
+        //while(!IsDone::instance()->getInstance()) {
         while(true) {
-        //while (!Singleton::instance()->getDone()) {
             for(int i = 0; i < arr.size(); i++) {
                 stringstream ss;
-                ss << "set " << arr[i] << " "<< toClient::instance()->getInstance().at(arr[i])<<"\r\n";
+                ss << "set " << arr[i] << " " << toClient::instance()->getInstance().at(arr[i]) << "\r\n";
                 string s = ss.str();
                 char const *message = s.c_str();
                 is_sent = send(client_socket, message, strlen(message), 0);
@@ -84,6 +84,7 @@ struct Client {
                     cout << "Error sending message" << endl;
                 }
             }
+            sleep(2);
         }
         //close(client_socket);
     }

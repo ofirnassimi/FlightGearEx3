@@ -11,33 +11,39 @@
 
 using namespace std;
 
+/**
+ * this map includes all of the variables that defined by "->"
+ */
 class VarToSim {
- private:
-  unordered_map<string, Variable*> myMap;
-  static VarToSim *s;
+private:
+    unordered_map<string, Variable *> myMap;
+    static VarToSim *s;
 
-  VarToSim() {
+    VarToSim() {
 
-  }
-
- public:
-  unordered_map<string, Variable*> getInstance() {
-    return myMap;
-  }
-  void add(string name, string address, float value) {
-    Variable *v = new Variable(address, value);
-    this->myMap[name] = v;
-  }
-  void updateVar(string name, float num) {
-    Variable *v = new Variable(this->myMap.at(name)->getName(), num);
-    this->myMap.at(name) = v;
-  }
-  static VarToSim *instance() {
-    if(!s) {
-      s = new VarToSim();
     }
-    return s;
-  }
+
+public:
+    unordered_map<string, Variable *> getInstance() {
+        return myMap;
+    }
+
+    void add(string name, string address, float value) {
+        Variable *v = new Variable(address, value);
+        this->myMap[name] = v;
+    }
+
+    void updateVar(string name, float num) {
+        Variable *v = new Variable(this->myMap.at(name)->getName(), num);
+        this->myMap.at(name) = v;
+    }
+
+    static VarToSim *instance() {
+        if (!s) {
+            s = new VarToSim();
+        }
+        return s;
+    }
 };
 
 

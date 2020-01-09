@@ -7,9 +7,6 @@
 #include <unistd.h>
 #include "Server.h"
 #include "Client.h"
-//#include "Vars.h"
-//#include "ConstVars.h"
-//#include "VarToSim.h"
 #include "Variable.h"
 #include "globFunctions.h"
 
@@ -52,31 +49,37 @@ public:
 
 class DefineVarCommand : public Command {
 
- public:
-  int execute(vector<string> commands, int index) {
-    if (commands[index+2] == "->") {
-      // real value : float value = Singleton::instance()->getInstance().at(commands[index+3]);
-      string address = commands[index+4].substr(1);
-      address.erase(address.size()-1);
-      Singleton::mutex_lock.lock();
-      VarToSim::instance()->add(commands[index+1],address ,Singleton::instance()->getInstance().at(address));
-      Singleton::mutex_lock.unlock();
-    } else if (commands[index+2] == "=") {
-        cout<<solveExpression(commands[index+3])<<endl;
-      updateVar("ConstVars", commands[index + 1], solveExpression(commands[index+3]));
-      return 4;
-    } else if (commands[index+2] == "<-") {
-       string address = commands[index+4].substr(1);
-       address.erase(address.size()-1);
-       Vars::instance()->add(commands[index+1], address);
+public:
+    /**
+     * determines which side the arrow is or if it is a "=" and adds it to the map it belongs
+     */
+    int execute(vector<string> commands, int index) {
+        if (commands[index + 2] == "->") {
+            // real value : float value = Singleton::instance()->getInstance().at(commands[index+3]);
+            string address = commands[index + 4].substr(1);
+            address.erase(address.size() - 1);
+            Singleton::mutex_lock.lock();
+            VarToSim::instance()->add(commands[index + 1], address, Singleton::instance()->getInstance().at(address));
+            Singleton::mutex_lock.unlock();
+        } else if (commands[index + 2] == "=") {
+            cout << solveExpression(commands[index + 3]) << endl;
+            updateVar("ConstVars", commands[index + 1], solveExpression(commands[index + 3]));
+            return 4;
+        } else if (commands[index + 2] == "<-") {
+            string address = commands[index + 4].substr(1);
+            address.erase(address.size() - 1);
+            Vars::instance()->add(commands[index + 1], address);
+        }
+        return 5;
     }
-    return 5;
-  }
 };
 
 
 class PrintCommand : public Command {
 public:
+    /**
+     * deletes the " from the beginning and the end of the string and prints it or prints the value
+     */
     int execute(vector<string> strings, int index) {
         if(strings[index + 1][0] == '"') {
             string newS = strings[index + 1];
@@ -98,6 +101,9 @@ public:
     }
 };
 
+/**
+ * checks which operator we have and parseing everything after the "{" while condition happens
+ */
 class WhileCommand : public Command {
 public:
     int execute(vector<string> strings, int index) {
@@ -269,6 +275,9 @@ public:
     }
 };
 
+/**
+ * checks which operator we have and parseing everything after the "{" only if the condition happens
+ */
 class IfCommand : public Command {
 public:
     int execute(vector<string> strings, int index) {

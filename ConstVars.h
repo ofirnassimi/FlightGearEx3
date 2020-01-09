@@ -9,6 +9,9 @@
 
 using namespace std;
 
+/**
+ * this map includes all of the variables that defined by "="
+ */
 class ConstVars {
  private:
   unordered_map<string, float> myMap;
